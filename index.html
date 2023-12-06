@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Jumping Obstacle Game</title>
+  <style>
+    /* 게임 캔버스 스타일 */
+    canvas {
+      border: 1px solid #000;
+      display: block;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="400" height="300"></canvas>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const playerWidth = 30;
+    const playerHeight = 30;
+    let playerX = 50;
+    let playerY = canvas.height - playerHeight;
+    let jump = false;
+    let gravity = 0.8;
+    let velocity = 0;
+
+    let obstacleWidth = 20;
+    let obstacleHeight = 20;
+    let obstacleX = canvas.width - obstacleWidth;
+    let obstacleY = canvas.height - obstacleHeight;
+
+    let score = 0;
+
+    function drawPlayer() {
+      ctx.fillStyle = "#0095DD";
+      ctx.fillRect(playerX, playerY, playerWidth, playerHeight);
+    }
+
+    function drawObstacle() {
+      ctx.fillStyle = "#FF0000";
+      ctx.fillRect(obstacleX, obstacleY, obstacleWidth, obstacleHeight);
+    }
+
+    function jumpPlayer() {
+      velocity = -12;
+      jump = true;
+    }
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === " ") {
+        jumpPlayer();
+      }
+    });
+
+    function update() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      drawPlayer();
+      drawObstacle();
+
+      if (jump) {
+        velocity += gravity;
+        playerY += velocity;
+
+        if (playerY >= canvas.height - playerHeight) {
+          playerY = canvas.height - playerHeight;
+          jump = false;
+        }
+      }
+
+      obstacleX -= 4;
+
+      if (obstacleX < -obstacleWidth) {
+        obstacleX = canvas.width;
+        obstacleY = canvas.height - obstacleHeight;
+        score++;
+      }
+
+      if (
+        playerX < obstacleX + obstacleWidth &&
+        playerX + playerWidth > obstacleX &&
+        playerY < obstacleY + obstacleHeight &&
+        playerY + playerHeight > obstacleY
+      ) {
+        alert("Game Over! Your Score: " + score);
+        document.location.reload();
+      }
+
+      requestAnimationFrame(update);
+    }
+
+    update();
+  </script>
+</body>
+</html>
